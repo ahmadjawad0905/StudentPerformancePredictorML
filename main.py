@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score    
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.tree import DecisionTreeRegressor
 
 data = pd.read_csv("student_data.csv")
@@ -48,13 +48,16 @@ print(f"Linear Regression Predicted Exam Score: {prediction[0]:.2f}")
 
 mse_lr = mean_squared_error(y_test, prediction)
 r2_lr = r2_score(y_test, prediction)
+mae = mean_absolute_error(y_test, prediction)
+
 print("Mean Squared Error:", mse_lr)
 print("R2 Score:", r2_lr)
+print("Mean Absolute Error:", mae)
 print("\n-----------------------------\n")
 
 # DECISION TREE REGRESSOR ( INTERMEDIATE )  
 
-dt = DecisionTreeRegressor()
+dt = DecisionTreeRegressor(max_depth=5, max_leaf_nodes=10)
 
 dt.fit(X_train, y_train)
 dt_prediction = dt.predict(X_test)
@@ -65,4 +68,3 @@ dt_mse = mean_squared_error(y_test, dt_prediction)
 dt_r2_score = r2_score(y_test, dt_prediction)
 print("Decision Tree Mean Squared Error:", dt_mse)
 print("Decision Tree R2 Score:", dt_r2_score)
-
