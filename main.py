@@ -5,18 +5,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.preprocessing import StandardScaler
 
 data = pd.read_csv("student_data.csv")
 
-print(data.head())
-print(data.isnull().sum())
+print(f"\nData Head:\n {data.head()}")
+print(f"\nMissing Values:\n {data.isnull().sum()}")
+print(f"\nData Description:\n {data.describe()}")
+print(f"\nDuplicated Values: {data.duplicated().sum()}")
 
 # Missing value fill
 data["Teacher_Quality"]= data["Teacher_Quality"].fillna(data["Teacher_Quality"].mode()[0])
 data["Parental_Education_Level"]= data["Parental_Education_Level"].fillna(data["Parental_Education_Level"].mode()[0])
 data["Distance_from_Home"]= data["Distance_from_Home"].fillna(data["Distance_from_Home"].mode()[0])
 
-print(data.isnull().sum())
+print(f"\nAfter Filling Missing Values:\n {data.isnull().sum()}")
 
 # Non Numeric Columns
 categorical_cols = [
@@ -27,15 +30,16 @@ categorical_cols = [
 ]
 
 le = LabelEncoder()
+
 data[categorical_cols] = data[categorical_cols].apply(le.fit_transform)
+print(f"\nTransformed Data:\n {data.head()}")
 
-print(data.head())
+scale = StandardScaler()
 
-
-X = data.drop("Exam_Score", axis=1)
+X_scaled = scale.fit_transform(data.drop("Exam_Score", axis=1))
 y = data["Exam_Score"]
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 # LOGISTIC REGRESSION ( BASIC )
 
