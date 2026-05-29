@@ -2,13 +2,21 @@ import streamlit as st
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score,roc_auc_score,recall_score,precision_score
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import StandardScaler
 
 data = pd.read_csv("student_data.csv")
 
+# Converting Exam_Score to binary classification (Pass/Fail) for Logistic Regression
+
+data["Performance"] = data["Exam_Score"].apply(
+    lambda x: 1 if x >= 70 else 0
+)
+data.drop("Exam_Score", axis=1, inplace=True)
+
+# Exploratory Data Analysis
 print(f"\nData Head:\n {data.head()}")
 print(f"\nMissing Values:\n {data.isnull().sum()}")
 print(f"\nData Description:\n {data.describe()}")
@@ -36,39 +44,45 @@ print(f"\nTransformed Data:\n {data.head()}")
 
 scale = StandardScaler()
 
-X_scaled = scale.fit_transform(data.drop("Exam_Score", axis=1))
-y = data["Exam_Score"]
+X_scaled = scale.fit_transform(data.drop("Performance", axis=1))
+y = data["Performance"]
 
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 # LOGISTIC REGRESSION ( BASIC )
 
-lr = LinearRegression()
+lr = LogisticRegression()
 
 lr.fit(X_train, y_train)
 prediction = lr.predict(X_test)
-print("\nLinear Regression\n")
-print(f"Linear Regression Predicted Exam Score: {prediction[0]:.2f}")
+print("\nLogistic Regression\n")
+print(f"Logistic Regression Predicted Performance: {prediction[0]}")
 
-mse_lr = mean_squared_error(y_test, prediction)
-r2_lr = r2_score(y_test, prediction)
-mae = mean_absolute_error(y_test, prediction)
+accuracy_lr = accuracy_score(y_test, prediction)
+precision_lr = precision_score(y_test, prediction)
+roc_lr = roc_auc_score(y_test, prediction)
+recall_lr = recall_score(y_test, prediction)
 
-print("Mean Squared Error:", mse_lr)
-print("R2 Score:", r2_lr)
-print("Mean Absolute Error:", mae)
+print("Accuracy:", f"{accuracy_lr:.2f}")
+print("ROC AUC Score:", f"{roc_lr:.2f}")
+print("Recall:", f"{recall_lr:.2f}")
+print("Precision:", f"{precision_lr:.2f}")
 print("\n-----------------------------\n")
 
-# DECISION TREE REGRESSOR ( INTERMEDIATE )  
+# DECISION TREE CLASSIFIER ( INTERMEDIATE )  
 
-dt = DecisionTreeRegressor(max_depth=5, max_leaf_nodes=10)
+dt = DecisionTreeClassifier(max_depth=5, max_leaf_nodes=10)
 
 dt.fit(X_train, y_train)
 dt_prediction = dt.predict(X_test)
 print("Decision Tree\n")
-print(f"Decision Tree Predicted Exam Score: {dt_prediction[0]:.2f}")
+print(f"Decision Tree Predicted Performance: {dt_prediction[0]}")
 
-dt_mse = mean_squared_error(y_test, dt_prediction)
-dt_r2_score = r2_score(y_test, dt_prediction)
-print("Decision Tree Mean Squared Error:", dt_mse)
-print("Decision Tree R2 Score:", dt_r2_score)
+dt_accuracy = accuracy_score(y_test, dt_prediction)
+dt_roc = roc_auc_score(y_test, dt_prediction)
+dt_recall = recall_score(y_test, dt_prediction)
+dt_precision = precision_score(y_test, dt_prediction)
+print("Accuracy:", f"{dt_accuracy:.2f}")
+print("ROC AUC Score:", f"{dt_roc:.2f}")
+print("Recall:", f"{dt_recall:.2f}")
+print("Precision:", f"{dt_precision:.2f}")
