@@ -6,6 +6,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score,roc_auc_score,recall_score,precision_score
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import StandardScaler
+import xgboost as xgb
+from sklearn.metrics import f1_score, confusion_matrix
 
 data = pd.read_csv("student_data.csv")
 
@@ -86,3 +88,26 @@ print("Accuracy:", f"{dt_accuracy:.2f}")
 print("ROC AUC Score:", f"{dt_roc:.2f}")
 print("Recall:", f"{dt_recall:.2f}")
 print("Precision:", f"{dt_precision:.2f}")
+
+#XGBOOST ( ADVANCED )
+
+xgb_model = xgb.XGBClassifier(
+    random_state=42, eval_metric='logloss', reg_lambda=1.0, max_depth=5
+)
+xgb_model.fit(X_train, y_train)
+
+xgb_prediction = xgb_model.predict(X_test)
+xgb_prob = xgb_model.predict_proba(X_test)[:, 1] 
+
+tn, fp, fn, tp = confusion_matrix(y_test, xgb_prediction).ravel()
+xgb_specificity = tn / (tn + fp)
+xgb_f1 = f1_score(y_test, xgb_prediction)
+
+print("\n-----------------------------\n")
+print("XGBoost Classifier (Advanced Model)\n")
+print(f"Accuracy:    {accuracy_score(y_test, xgb_prediction):.2f}")
+print(f"ROC AUC:     {roc_auc_score(y_test, xgb_prob):.2f}")
+print(f"Precision:   {precision_score(y_test, xgb_prediction):.2f}")
+print(f"Recall:      {recall_score(y_test, xgb_prediction):.2f}")
+print(f"F1-Score:    {xgb_f1:.2f}")
+print(f"Specificity: {xgb_specificity:.2f}")
