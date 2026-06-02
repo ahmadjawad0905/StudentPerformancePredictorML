@@ -71,16 +71,11 @@ y = data["Performance"]
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled,
-    y,
-    test_size=0.2,
-    random_state=42
-)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
 # LOGISTIC REGRESSION
 
-lr = LogisticRegression(max_iter=1000)
+lr = LogisticRegression()
 
 lr.fit(X_train, y_train)
 
@@ -88,20 +83,36 @@ prediction = lr.predict(X_test)
 
 print("\n===== Logistic Regression =====")
 
-print("Prediction:", prediction[0])
-print("Accuracy:", round(accuracy_score(y_test, prediction), 2))
-print("ROC AUC:", round(roc_auc_score(y_test, prediction), 2))
-print("Recall:", round(recall_score(y_test, prediction), 2))
-print("Precision:", round(precision_score(y_test, prediction), 2))
+print("Before Regularization:")
+
+print(f"Accuracy: {accuracy_score(y_test, prediction):.2f}")
+print(f"ROC AUC: {roc_auc_score(y_test, prediction):.2f}")
+print(f"Recall: {recall_score(y_test, prediction):.2f}")
+print(f"Precision: {precision_score(y_test, prediction):.2f}")
+
+print("\nAfter L2 Regularization:")
+
+lr_l2 = LogisticRegression(penalty='l2', C=0.1, max_iter=800, random_state=42)
+lr_l2.fit(X_train, y_train)
+l2_prediction = lr_l2.predict(X_test)
+print(f"Accuracy: {accuracy_score(y_test, l2_prediction):.2f}")
+print(f"ROC AUC: {roc_auc_score(y_test, l2_prediction):.2f}")
+print(f"Recall: {recall_score(y_test, l2_prediction):.2f}")
+print(f"Precision: {precision_score(y_test, l2_prediction):.2f}")
+
+print("\nAfter L1 Regularization:")
+
+lr_l1 = LogisticRegression(penalty='l1', C=0.1, random_state=42, solver='liblinear')
+lr_l1.fit(X_train, y_train)
+l1_prediction = lr_l1.predict(X_test)
+print(f"Accuracy: {accuracy_score(y_test, l1_prediction):.2f}")
+print(f"ROC AUC: {roc_auc_score(y_test, l1_prediction):.2f}")
+print(f"Recall: {recall_score(y_test, l1_prediction):.2f}")
+print(f"Precision: {precision_score(y_test, l1_prediction):.2f}")
 
 
 # DECISION TREE
-
-dt = DecisionTreeClassifier(
-    max_depth=5,
-    max_leaf_nodes=10,
-    random_state=42
-)
+dt = DecisionTreeClassifier()
 
 dt.fit(X_train, y_train)
 
@@ -109,12 +120,23 @@ dt_prediction = dt.predict(X_test)
 
 print("\n===== Decision Tree =====")
 
-print("Prediction:", dt_prediction[0])
-print("Accuracy:", round(accuracy_score(y_test, dt_prediction), 2))
-print("ROC AUC:", round(roc_auc_score(y_test, dt_prediction), 2))
-print("Recall:", round(recall_score(y_test, dt_prediction), 2))
-print("Precision:", round(precision_score(y_test, dt_prediction), 2))
+print("Before Regularization:")
 
+print(f"Accuracy: {accuracy_score(y_test, dt_prediction):.2f}")
+print(f"ROC AUC: {roc_auc_score(y_test, dt_prediction):.2f}")
+print(f"Recall: {recall_score(y_test, dt_prediction):.2f}")
+print(f"Precision: {precision_score(y_test, dt_prediction):.2f}")
+
+print("\nAfter Regularization")
+
+dt_reg = DecisionTreeClassifier(max_depth=5,max_leaf_nodes=10,random_state=42)
+dt_reg.fit(X_train, y_train)
+dt_reg_prediction = dt_reg.predict(X_test)
+
+print(f"Accuracy: {accuracy_score(y_test, dt_reg_prediction):.2f}")
+print(f"ROC AUC: {roc_auc_score(y_test, dt_reg_prediction):.2f}")
+print(f"Recall: {recall_score(y_test, dt_reg_prediction):.2f}")
+print(f"Precision: {precision_score(y_test, dt_reg_prediction):.2f}")
 
 #XGBOOST ( ADVANCED )
 
