@@ -17,12 +17,7 @@ with cola:
 with colc:
     pass
 with colb:
-    st.title("Student Performance Prediction")
-
-    st.write("""
-    This application predicts student exam performance based on academic,
-    social, and personal factors.
-        """)
+    st.title("📚LearnLytics")
 
 st.divider() 
 

@@ -150,6 +150,7 @@ xgb_f1 = f1_score(y_test, xgb_prediction)
 loss_xg = log_loss(y_test, xgb_prob)
 
 print("\n----------BEFORE REGULARIZATION--------------\n")
+
 print(f"Loss XGBoost: {loss_xg}\n")
 print("XGBoost Classifier (Advanced Model)\n")
 print(f"Accuracy:    {accuracy_score(y_test, xgb_prediction):.2f}")
