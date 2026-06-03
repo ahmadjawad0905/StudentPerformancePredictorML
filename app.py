@@ -1,4 +1,12 @@
 import streamlit as st
+import pandas as pd
+import joblib
+
+model_lr = joblib.load("saved_models/logistic_model.pkl")
+model_dt = joblib.load("saved_models/decision_tree_model.pkl")
+model_xgb = joblib.load("saved_models/xgboost_model.pkl")
+scaler = joblib.load("saved_models/scaler.pkl")
+columns = joblib.load("saved_models/columns.pkl")
 
 st.set_page_config(layout="wide")
 
@@ -117,4 +125,59 @@ with col7[0]:
 st.divider()
 
 if st.button("Predict Exam Score", use_container_width=True):
-    st.success("Predicted Exam Score: 85")
+   
+   user_data = {
+        "Hours_Studied": hours_studied,
+        "Attendance": attendance,
+        "Sleep_Hours": sleep_hours,
+        "Previous_Scores": previous_scores,
+        "Tutoring_Sessions": tutoring_sessions,
+        "Physical_Activity": physical_activity,
+
+        "Parental_Involvement": parental_involvement,
+        "Access_to_Resources": access_to_resources,
+        "Extracurricular_Activities": extracurricular_activities,
+        "Motivation_Level": motivation_level,
+        "Internet_Access": internet_access,
+        "Family_Income": family_income,
+        "Teacher_Quality": teacher_quality,
+        "School_Type": school_type,
+        "Peer_Influence": peer_influence,
+        "Learning_Disabilities": learning_disabilities,
+        "Parental_Education_Level": parental_education_level,
+        "Distance_from_Home": distance_from_home,
+        "Gender": gender
+    }
+   
+   df = pd.DataFrame([user_data])
+
+   df = pd.get_dummies(df)
+   df = df.reindex(columns=columns, fill_value=0)
+
+   df_raw = df
+   df_scaled = scaler.transform(df)
+
+   prediction_lr = model_lr.predict(df_scaled)[0]
+   prediction_dt = model_dt.predict(df_raw)[0]
+   prediction_xgb = model_xgb.predict(df_raw)[0]
+
+   st.subheader("Predicted Exam Performance")
+
+   colx, coly, colz = st.columns(3)
+   with colx:
+       if prediction_lr == 1:
+           st.success("Logistic Regression Prediction: Pass")
+       else:
+           st.error("Logistic Regression Prediction: Fail")
+
+   with coly:
+       if prediction_dt == 1:
+           st.success("Decision Tree Prediction: Pass")
+       else:
+           st.error("Decision Tree Prediction: Fail")
+
+   with colz:
+       if prediction_xgb == 1:
+           st.success("XGBoost Prediction: Pass")
+       else:
+           st.error("XGBoost Prediction: Fail")
