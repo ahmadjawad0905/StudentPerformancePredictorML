@@ -293,3 +293,48 @@ plt.ylabel("PCA Component 2")
 plt.title("Actual Student Performance Distribution")
 plt.grid(True)
 plt.show()
+
+# ===============================================================================================================================
+
+# FOR AI PART 
+
+from KBS import forward_chaining
+
+student = pd.read_csv("student_data.csv").iloc[328]
+
+facts = []
+
+if student["Attendance"] < 75:
+    facts.append("low_attendance")
+if student["Attendance"] > 85:
+    facts.append("high_attendance")
+if student["Hours_Studied"] > 20:
+    facts.append("high_study_hours")    
+if student["Previous_Scores"] > 70:
+    facts.append("high_previous_scores")
+if student["Motivation_Level"] == "High":
+    facts.append("high_motivation")
+if student["Motivation_Level"] == "Low":
+    facts.append("low_motivation")
+if student["Access_to_Resources"] == "Low":
+    facts.append("low_resources")
+if student["Teacher_Quality"] == "High":
+    facts.append("high_teacher_quality")
+if student["Peer_Influence"] == "Negative":
+    facts.append("negative_peer_influence")
+if prediction[0] == 1:
+    facts.append("ml_good")
+else:
+    facts.append("ml_poor")
+    
+final_facts, trace = forward_chaining(facts)
+
+print("\nInference Trace")
+
+for step in trace:
+    print(step)
+
+print("\nFinal Facts")
+
+for fact in final_facts:
+    print(fact)
