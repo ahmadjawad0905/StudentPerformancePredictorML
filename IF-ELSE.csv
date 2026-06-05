@@ -1,0 +1,13 @@
+Rule_Name,IF_Conditions,THEN_Conclusion
+R1,low_attendance AND low_motivation,high_academic_risk
+R2,high_study_hours AND high_motivation,strong_study_habits
+R3,strong_study_habits,low_academic_risk
+R4,high_previous_scores,strong_academic_background
+R5,strong_academic_background AND strong_study_habits,high_success_chance
+R6,low_resources,resource_deficiency
+R7,resource_deficiency,recommend_resources
+R8,high_teacher_quality AND high_attendance,excellent_learning_environment
+R9,negative_peer_influence,social_risk
+R10,social_risk AND high_academic_risk,counseling_required
+R11,ml_poor AND high_academic_risk,at_risk_student
+R12,ml_good AND high_success_chance,high_performer
