@@ -153,8 +153,8 @@ if st.button("Predict Exam Score", use_container_width=True):
    df_scaled = scaler.transform(df)
 
    prediction_lr = model_lr.predict(df_scaled)[0]
-   prediction_dt = model_dt.predict(df_raw)[0]
-   prediction_xgb = model_xgb.predict(df_raw)[0]
+   prediction_dt = model_dt.predict(df_scaled)[0]
+   prediction_xgb = model_xgb.predict(df_scaled)[0]
 
    st.subheader("Predicted Exam Performance")
 

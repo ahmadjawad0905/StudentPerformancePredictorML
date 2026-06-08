@@ -294,6 +294,105 @@ plt.title("Actual Student Performance Distribution")
 plt.grid(True)
 plt.show()
 
+# -------------------------
+# STATE SPACE FORMULATION
+# -------------------------
+
+state_space = {
+
+    "high_risk_attendance": [
+        ("send_warning_email", "moderate_risk"),
+        ("assign_faculty_mentor", "improving_state")
+    ],
+
+    "high_risk_motivation": [
+        ("schedule_counseling", "moderate_risk"),
+        ("assign_study_group", "improving_state")
+    ],
+
+    "moderate_risk": [
+        ("mandatory_tutoring", "goal_pass")
+    ],
+
+    "improving_state": [
+        ("advisor_meeting", "goal_pass")
+    ],
+
+    "goal_pass": []
+}
+
+
+# -------------------------
+# BREADTH-FIRST SEARCH (BFS)
+# -------------------------
+
+def bfs_search(start_state):
+
+    queue = [(start_state, [])]
+    
+    visited = []
+
+    while queue:
+
+        current_state, path = queue.pop(0)
+
+        if current_state == "goal_pass":
+            return path
+
+        if current_state not in visited:
+            
+            visited.append(current_state)
+
+            if current_state in state_space:
+                
+                for action, next_state in state_space[current_state]:
+                    
+                    new_path = list(path)
+                    new_path.append(action)
+                    
+                    queue.append((next_state, new_path))
+
+    return None
+
+
+# -------------------------
+# AGENT EXECUTION
+# -------------------------
+
+print("\n===== Intelligent Agent Search (BFS) =====")
+
+student = pd.read_csv("student_data.csv").iloc[328]
+
+if prediction[0] == 1:
+    
+    initial_state = "goal_pass"
+    
+    print("\nML Prediction: Pass")
+    print(f"Initial State: {initial_state}")
+    print("\nStatus: Student is already at the goal state. No interventions needed.")
+
+else:
+    
+    if student["Attendance"] < 75:
+        initial_state = "high_risk_attendance"
+    else:
+        initial_state = "high_risk_motivation"
+        
+    print("\nML Prediction: Fail")
+    print(f"Initial State: {initial_state}")
+
+    optimal_path = bfs_search(initial_state)
+
+    if optimal_path:
+        
+        print("\nOptimal Intervention Path:")
+        
+        for step_num, action in enumerate(optimal_path, 1):
+            print(f"Step {step_num}: {action}")
+            
+    else:
+        print("\nNo valid intervention path found.")
+
 # ===============================================================================================================================
 
 # FOR AI PART 
